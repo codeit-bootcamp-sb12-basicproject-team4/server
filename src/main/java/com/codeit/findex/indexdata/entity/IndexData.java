@@ -1,0 +1,79 @@
+package com.codeit.findex.indexdata.entity;
+
+
+import com.codeit.findex.global.common.BaseUpdatableEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+@Entity
+@Getter
+@SuperBuilder
+@Table(name = "index_data")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public class IndexData extends BaseUpdatableEntity {
+
+//  @NotNull
+//  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
+//  @JoinColumn(name = "findex_id", nullable = false)
+//  private Findex findex;
+
+  @NotNull
+  @Column(name = "base_date", nullable = false)
+  private LocalDate baseDate;
+
+  @Size(max = 20)
+  @NotNull
+  @Column(name = "source_type", nullable = false, length = 20)
+  private String sourceType;
+
+  @NotNull
+  @Column(name = "market_price", nullable = false, precision = 18, scale = 2)
+  private BigDecimal marketPrice;
+
+  @NotNull
+  @Column(name = "close_price", nullable = false, precision = 18, scale = 2)
+  private BigDecimal closePrice;
+
+  @NotNull
+  @Column(name = "high_price", nullable = false, precision = 18, scale = 2)
+  private BigDecimal highPrice;
+
+  @NotNull
+  @Column(name = "low_price", nullable = false, precision = 18, scale = 2)
+  private BigDecimal lowPrice;
+
+  @NotNull
+  @Column(name = "versus", nullable = false, precision = 18, scale = 2)
+  private BigDecimal versus;
+
+  @NotNull
+  @Column(name = "fluctuation_rate", nullable = false, precision = 5, scale = 2)
+  private BigDecimal fluctuationRate;
+
+  @Column(name = "trading_quantity")
+  private Long tradingQuantity;
+
+  @Column(name = "trading_price")
+  private Long tradingPrice;
+
+  @Column(name = "market_totalamount")
+  private Long marketTotalamount;
+
+}
