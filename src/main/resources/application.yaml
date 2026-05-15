@@ -3,6 +3,8 @@ spring:
     name: findex
   profiles:
     active: dev   # dev, prod 선택 가능
+  config:
+    import: application-secret.yaml
 
   jpa:
     show-sql: true
