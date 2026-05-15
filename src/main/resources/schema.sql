@@ -18,7 +18,7 @@ CREATE TABLE findex -- ERD의 index -> findex로 변경
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
 
-    CONSTRAINT chk_findex_source_type CHECK (source_type IN ('USER', 'OPEN_API')),
+    CONSTRAINT chk_findex_source_type CHECK (source_type IN ('USER', 'OPEN_API')), -- 상수 대문자 통일
     CONSTRAINT uk_findex_name_class UNIQUE (index_classification, index_name)
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE index_data
     updated_at TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_index_data_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE,
-    CONSTRAINT chk_index_data_source CHECK (source_type IN ('USER', 'OPEN_API')),
+    CONSTRAINT chk_index_data_source CHECK (source_type IN ('USER', 'OPEN_API')), -- 상수 대문자 통일
     CONSTRAINT uk_index_data_findex_date UNIQUE (findex_id, base_date)
 
 );
@@ -86,15 +86,13 @@ CREATE TABLE integration_log (
     created_at TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_integration_log_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE,
-    CONSTRAINT chk_log_job_type CHECK (job_type IN ('index', 'data')),
-    CONSTRAINT chk_log_worker CHECK (worker IN ('requestclientip', 'system')),
-    CONSTRAINT chk_log_result CHECK (result IN ('success', 'fail'))
+    CONSTRAINT chk_log_job_type CHECK (job_type IN ('INDEX', 'DATA')),  -- 상수 대문자 통일
+    CONSTRAINT chk_log_result CHECK (result IN ('SUCCESS', 'FAIL')) -- 상수 대문자 통일
 );
 COMMENT ON TABLE integration_log IS '연동 작업 로그';
 COMMENT ON COLUMN integration_log.id IS '연동작업ID (PK)';
 COMMENT ON COLUMN integration_log.job_type IS '유형 ("index", "data")';
 COMMENT ON COLUMN integration_log.target_date IS '대상날짜 (연동된 지수의 기준시점(findex) or 기준일자(index_data))';
-COMMENT ON COLUMN integration_log.worker IS '작업자 ("requestclientip", "system")';
 COMMENT ON COLUMN integration_log.job_time IS '작업일시 (연동 작업이 수행된 일시)';
 COMMENT ON COLUMN integration_log.result IS '결과 ("success", "fail")';
 COMMENT ON COLUMN integration_log.findex_id IS '지수ID (FK)';
@@ -104,8 +102,8 @@ CREATE TABLE auto_integration (
     id UUID PRIMARY KEY,                                -- UUIDv7
     findex_id UUID UNIQUE NOT NULL,                            -- ERD의 id -> findex_id 로 변경
     is_active BOOLEAN NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL, -- 수정
+    updated_at TIMESTAMP NOT NULL, -- 수정
 
     CONSTRAINT fk_auto_integration_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE
 );
