@@ -28,7 +28,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     // 3. API Docs (Swagger)
-    implementation 화'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16'
 
     // 4. Util (Lombok & MapStruct)
     compileOnly 'org.projectlombok:lombok'

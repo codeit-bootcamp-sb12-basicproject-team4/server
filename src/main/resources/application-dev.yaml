@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:h2:mem:parsingdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql   # DDL (테이블 생성)
+      data-locations: classpath:data.sql        # DML (기본 데이터 삽입)
+
+  jpa:
+    hibernate:
+      ddl-auto: none                            # schema.sql 로 관리
+    defer-datasource-initialization: true       # schema.sql → data.sql → JPA 순서 보장
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      # 접속 : http://localhost:8080/h2-console
+      # JDBC URL : jdbc:h2:mem:parsingdb
+
+logging:
+  level:
+    org.hibernate.SQL: debug
