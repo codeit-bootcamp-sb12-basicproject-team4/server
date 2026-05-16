@@ -2,14 +2,17 @@ package com.codeit.findex.indexdata.entity;
 
 
 import com.codeit.findex.global.common.BaseUpdatableEntity;
+import com.codeit.findex.global.common.SourceType;
+import com.codeit.findex.indexinfo.entity.Findex;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AccessLevel;
@@ -28,20 +31,20 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class IndexData extends BaseUpdatableEntity {
 
-//  @NotNull
-//  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//  @OnDelete(action = OnDeleteAction.CASCADE)
-//  @JoinColumn(name = "findex_id", nullable = false)
-//  private Findex findex;
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JoinColumn(name = "findex_id", nullable = false)
+  private Findex findex;
 
   @NotNull
   @Column(name = "base_date", nullable = false)
   private LocalDate baseDate;
 
-  @Size(max = 20)
   @NotNull
+  @Enumerated(EnumType.STRING)
   @Column(name = "source_type", nullable = false, length = 20)
-  private String sourceType;
+  private SourceType sourceType;
 
   @NotNull
   @Column(name = "market_price", nullable = false, precision = 18, scale = 2)

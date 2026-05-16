@@ -36,4 +36,5 @@ public abstract class BaseEntity {
       this.id = UuidCreator.getTimeOrderedEpoch();
     }
   }
+
 }

@@ -18,4 +18,5 @@ public abstract class BaseUpdatableEntity extends BaseEntity {
   @LastModifiedDate
   @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
   private Instant updatedAt;
+
 }

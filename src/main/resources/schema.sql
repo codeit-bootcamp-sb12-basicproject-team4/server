@@ -15,8 +15,8 @@ CREATE TABLE findex -- ERD의 index -> findex로 변경
     base_index DECIMAL(18, 2) NOT NULL,
     source_type VARCHAR(20) NOT NULL, -- "USER" 또는 "OPEN_API"
     favorite BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
 
     CONSTRAINT chk_findex_source_type CHECK (source_type IN ('USER', 'OPEN_API')), -- 상수 대문자 통일
     CONSTRAINT uk_findex_name_class UNIQUE (index_classification, index_name)
@@ -49,8 +49,8 @@ CREATE TABLE index_data
     trading_quantity BIGINT,
     trading_price BIGINT,
     market_totalamount BIGINT,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
 
     CONSTRAINT fk_index_data_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE,
     CONSTRAINT chk_index_data_source CHECK (source_type IN ('USER', 'OPEN_API')), -- 상수 대문자 통일
@@ -83,9 +83,10 @@ CREATE TABLE integration_log (
     job_time TIMESTAMP NOT NULL,
     result VARCHAR(10) NOT NULL,
     findex_id UUID NOT NULL,                            -- ERD의 id -> findex_id 로 변경
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 
-    CONSTRAINT fk_integration_log_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE,
+    -- CONSTRAINT fk_integration_log_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE,
+    -- -> 삭제종속 제거 (로그성 데이터 & findex와 비식별관계)
     CONSTRAINT chk_log_job_type CHECK (job_type IN ('INDEX', 'DATA')),  -- 상수 대문자 통일
     CONSTRAINT chk_log_result CHECK (result IN ('SUCCESS', 'FAIL')) -- 상수 대문자 통일
 );
@@ -99,18 +100,18 @@ COMMENT ON COLUMN integration_log.findex_id IS '지수ID (FK)';
 COMMENT ON COLUMN integration_log.created_at IS '생성일시';
 
 CREATE TABLE auto_integration (
-    id UUID PRIMARY KEY,                                -- UUIDv7
-    findex_id UUID UNIQUE NOT NULL,                            -- ERD의 id -> findex_id 로 변경
+    --id UUID PRIMARY KEY,                                 -- 기본키==외래키 설정을 통한 "식별관계" 구축
+    findex_id UUID PRIMARY KEY,                            -- ERD의 id -> findex_id 로 변경
     is_active BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL, -- 수정
-    updated_at TIMESTAMP NOT NULL, -- 수정
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
 
     CONSTRAINT fk_auto_integration_findex FOREIGN KEY (findex_id) REFERENCES findex (id) ON DELETE CASCADE
 );
 
 COMMENT ON TABLE auto_integration IS '자동 연동 설정';
-COMMENT ON COLUMN auto_integration.id IS '자동연동설정ID (PK)';
-COMMENT ON COLUMN auto_integration.findex_id IS '지수ID (FK)';
+--COMMENT ON COLUMN auto_integration.id IS '자동연동설정ID (PK)';
+COMMENT ON COLUMN auto_integration.findex_id IS '지수ID (PK)';
 COMMENT ON COLUMN auto_integration.is_active IS '활성화 여부';
 COMMENT ON COLUMN auto_integration.created_at IS '생성일시';
 COMMENT ON COLUMN auto_integration.updated_at IS '수정일시';
