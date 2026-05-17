@@ -1,6 +1,8 @@
 package com.codeit.findex.indexdata.service;
 
+import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,4 +14,8 @@ public class IndexDataServiceImpl implements IndexDataService {
 
   private final IndexDataRepository indexDataRepository;
 
+  @Override
+  public IndexChartDto getIndexChart(UUID indexInfoId, String periodType) {
+    return null;
+  }
 }
