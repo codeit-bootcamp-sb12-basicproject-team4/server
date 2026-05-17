@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IndexResponseDto {
+public class IndexResponse {
   private UUID id;
   private JobType jobType;
   private UUID indexInfoId;

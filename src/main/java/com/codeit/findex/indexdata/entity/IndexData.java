@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +27,12 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @SuperBuilder
-@Table(name = "index_data")
+@Table(name = "index_data", uniqueConstraints = {
+    @UniqueConstraint(
+        name = "uk_index_data_findex_date",
+        columnNames = {"findex_id", "base_date"}
+    )
+})
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class IndexData extends BaseUpdatableEntity {
