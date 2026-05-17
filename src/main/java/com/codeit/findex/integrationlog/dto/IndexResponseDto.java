@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IntegrationLogResponseDto {
+public class IndexResponseDto {
   private UUID id;
   private JobType jobType;
   private UUID indexInfoId;
