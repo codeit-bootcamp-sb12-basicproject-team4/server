@@ -27,7 +27,7 @@ public interface IndexDataApi {
 
       }
   )
-  ResponseEntity<IndexChartDto> getIndexChart( // 메서드 이름을 컨트롤러와 통일
+  ResponseEntity<IndexChartDto> getIndexChart(
       @Parameter(description = "지수 정보 ID", example = "123e4567-e89b-12d3-a456-426614174000")
       @PathVariable UUID id,
 

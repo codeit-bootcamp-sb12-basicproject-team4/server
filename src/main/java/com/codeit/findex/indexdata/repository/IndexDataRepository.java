@@ -4,6 +4,6 @@ import com.codeit.findex.indexdata.entity.IndexData;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IndexDataRepository extends JpaRepository<IndexData, UUID> {
+public interface IndexDataRepository extends JpaRepository<IndexData, UUID>, IndexDataQueryRepository {
 
 }
