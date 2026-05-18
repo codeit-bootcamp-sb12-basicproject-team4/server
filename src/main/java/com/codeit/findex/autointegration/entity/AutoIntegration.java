@@ -49,4 +49,9 @@ public class AutoIntegration {
   @JoinColumn(name = "findex_id")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Findex findex;
+
+  public void updateActive(Boolean isActive) {
+    this.isActive = isActive;
+    this.updatedAt = Instant.now();
+  }
 }
