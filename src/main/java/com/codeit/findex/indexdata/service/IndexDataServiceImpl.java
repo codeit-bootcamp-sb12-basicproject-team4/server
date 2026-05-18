@@ -27,13 +27,16 @@ public class IndexDataServiceImpl implements IndexDataService {
   public IndexChartDto getIndexChart(UUID indexInfoId, String periodType) {
 
     if (periodType == null || periodType.trim().isEmpty()) {
-      throw new IllegalArgumentException("부서 코드는 필수입니다.");
+      throw new IllegalArgumentException("NULL이 들어갈 수 없습니다");
+    }
+    if (!periodType.equals("DAILY") && !periodType.equals("WEEKLY") && !periodType.equals("MONTHLY")) {
+      throw new IllegalArgumentException("올바른 기간 유형을 입력해주세요 (DAILY, WEEKLY, MONTHLY)");
     }
 
     List<IndexData> rawChartData = indexDataRepository.findAllByFindexIdWithFindex(indexInfoId);
 
     if (rawChartData.isEmpty()) {
-      throw new NoSuchElementException("부서 코드는 필수입니다.");
+      throw new NoSuchElementException("해당 지수에 대한 데이터가 존재하지 않습니다");
     }
 
     Findex findex = rawChartData.get(0).getFindex();
