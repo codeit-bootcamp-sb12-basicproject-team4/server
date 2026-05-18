@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Schema(description = "지수 데이터 생성 요청")
 public record IndexDataCreateRequest(
-    @NotNull @Schema(description = "지수 정보 ID", example = "1")
+    @NotNull @Schema(description = "지수 정보 ID", example = "018f3a3a-1111-7000-8000-000000000001")
     UUID indexInfoId,
     @NotNull @Schema(description = "기준 일자", example = "2026-01-01")
     LocalDate baseDate,

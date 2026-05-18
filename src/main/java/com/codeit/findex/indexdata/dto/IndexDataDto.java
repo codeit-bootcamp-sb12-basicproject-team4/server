@@ -8,13 +8,13 @@ import java.util.UUID;
 
 @Schema(description = "지수 데이터 DTO")
 public record IndexDataDto(
-    @Schema(description = "지수 데이터 ID", example = "1")
+    @Schema(description = "지수 데이터 ID", example = "018f3a3a-1111-7000-8000-000000000001")
     UUID id,
-    @Schema(description = "지수 정보 ID", example = "1")
+    @Schema(description = "지수 정보 ID", example = "018f3a3a-1111-7000-8000-000000000001")
     UUID indexInfoId,
     @Schema(description = "기준 일자", example = "2026-01-01")
     LocalDate baseDate,
-    @Schema(description = "출처 (사용자, Open API)", enumAsRef = true, example = "OPEN_API")
+    @Schema(description = "출처 (사용자, Open API)", example = "OPEN_API")
     SourceType sourceType,
     @Schema(description = "시가", example = "2800.25")
     BigDecimal marketPrice,

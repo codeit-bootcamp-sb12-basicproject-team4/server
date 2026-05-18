@@ -1,5 +1,6 @@
 package com.codeit.findex.indexdata.repository;
 
+import com.codeit.findex.indexdata.dto.IndexDataDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.entity.QIndexData;
 import com.querydsl.core.BooleanBuilder;
@@ -22,7 +23,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public Slice<IndexData> findAllSlice(UUID indexInfoId, LocalDate startDate, LocalDate endDate,
+  public Slice<IndexData> findAllWithCursor(UUID indexInfoId, LocalDate startDate, LocalDate endDate,
       UUID idAfter, String cursor, String sortField, String sortDirection, int size) {
     BooleanBuilder where = new BooleanBuilder();
     if (indexInfoId != null) {
@@ -97,7 +98,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
 
   @Override
   public Long countByFilters(UUID indexInfoId, LocalDate startDate, LocalDate endDate, UUID idAfter,
-      String cursor, String sortField, String sortDirection, int size) {
+      String cursor) {
     BooleanBuilder where = new BooleanBuilder();
     if (indexInfoId != null) {
       where.and(indexData.findex.id.eq(indexInfoId));
@@ -114,5 +115,58 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
         .join(indexData.findex)
         .where(where)
         .fetchOne();
+  }
+
+  @Override
+  public List<IndexData> findAllByCondition(UUID indexInfoId, LocalDate startDate,
+      LocalDate endDate, String sortField, String sortDirection) {
+    BooleanBuilder where = new BooleanBuilder();
+    if (indexInfoId != null) {
+      where.and(indexData.findex.id.eq(indexInfoId));
+    }
+    if (startDate != null) {
+      where.and(indexData.baseDate.goe(startDate));
+    }
+    if (endDate != null) {
+      where.and(indexData.baseDate.loe(endDate));
+    }
+
+    OrderSpecifier<?> order;
+    switch (sortField) {
+      case "baseDate" -> order = "desc".equalsIgnoreCase(sortDirection) ? indexData.baseDate.desc()
+          : indexData.baseDate.asc();
+      case "marketPrice" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.marketPrice.desc()
+              : indexData.marketPrice.asc();
+      case "closingPrice" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.closePrice.desc()
+              : indexData.closePrice.asc();
+      case "highPrice" ->
+          order = "desc".equalsIgnoreCase(sortDirection) ? indexData.highPrice.desc()
+              : indexData.highPrice.asc();
+      case "lowPrice" -> order = "desc".equalsIgnoreCase(sortDirection) ? indexData.lowPrice.desc()
+          : indexData.lowPrice.asc();
+      case "versus" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.versus.desc() : indexData.versus.asc();
+      case "fluctuationRate" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.fluctuationRate.desc()
+              : indexData.fluctuationRate.asc();
+      case "tradingQuantity" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.tradingQuantity.desc()
+              : indexData.tradingQuantity.asc();
+      case "tradingPrice" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.tradingPrice.desc()
+              : indexData.tradingPrice.asc();
+      case "marketTotalAmount" -> order =
+          "desc".equalsIgnoreCase(sortDirection) ? indexData.marketTotalamount.desc()
+              : indexData.marketTotalamount.asc();
+      default -> throw new IllegalArgumentException("Invalid sort field: " + sortField);
+    }
+
+    return jpaQueryFactory.selectFrom(indexData)
+        .join(indexData.findex).fetchJoin()
+        .where(where)
+        .orderBy(order)
+        .fetch();
   }
 }

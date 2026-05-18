@@ -1,7 +1,11 @@
 package com.codeit.findex.indexdata.mapper;
 
 import com.codeit.findex.indexdata.dto.IndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,4 +17,34 @@ public interface IndexDataMapper {
   @Mapping(target = "closingPrice", source = "indexData.closePrice")
   @Mapping(target = "marketTotalAmount", source = "indexData.marketTotalamount")
   IndexDataDto toIndexDataDto(IndexData indexData);
+
+  default IndexPerformanceDto toIndexPerformanceDto(IndexData indexData, IndexData previousIndexData){
+    BigDecimal versus = indexData.getClosePrice().subtract(previousIndexData.getClosePrice());
+    BigDecimal fluctuationRate = versus.divide(previousIndexData.getClosePrice(), 6, RoundingMode.HALF_UP)
+        .multiply(BigDecimal.valueOf(100))
+        .setScale(2, RoundingMode.HALF_UP);
+    return new IndexPerformanceDto(
+        indexData.getFindex().getId(),
+        indexData.getFindex().getIndexClassification(),
+        indexData.getFindex().getIndexName(),
+        versus,
+        fluctuationRate,
+        indexData.getClosePrice(),
+        previousIndexData.getClosePrice());
+  }
+
+  default List<Object> toCsv(IndexData indexData){
+    return List.of(
+        indexData.getBaseDate(),
+        indexData.getMarketPrice(),
+        indexData.getClosePrice(),
+        indexData.getHighPrice(),
+        indexData.getLowPrice(),
+        indexData.getVersus(),
+        indexData.getFluctuationRate(),
+        indexData.getTradingQuantity(),
+        indexData.getTradingPrice(),
+        indexData.getMarketTotalamount()
+    );
+  }
 }

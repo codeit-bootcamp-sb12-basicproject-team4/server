@@ -1,14 +1,19 @@
 package com.codeit.findex.indexdata.controller;
 
+import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
 import com.codeit.findex.indexdata.dto.IndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.service.IndexDataService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +31,7 @@ public class IndexDataController implements IndexDataApi {
 
   @Override
   @GetMapping()
-  public ResponseEntity<CursorPageResponseIndexDataDto> findIndexData(
+  public ResponseEntity<CursorPageResponseIndexDataDto> getIndexDataList(
       @RequestParam(required = false) UUID indexInfoId,
       @RequestParam(required = false) LocalDate startDate,
       @RequestParam(required = false) LocalDate endDate,
@@ -37,7 +42,7 @@ public class IndexDataController implements IndexDataApi {
       @RequestParam(defaultValue = "10", required = false) int size) {
 
     return ResponseEntity.ok(
-        indexDataService.findIndexData(indexInfoId, startDate, endDate, idAfter, cursor,
+        indexDataService.getIndexDataList(indexInfoId, startDate, endDate, idAfter, cursor,
             sortField, sortDirection, size));
   }
 
@@ -45,5 +50,29 @@ public class IndexDataController implements IndexDataApi {
   @PostMapping()
   public ResponseEntity<IndexDataDto> create(@RequestBody @Valid IndexDataCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(indexDataService.create(request));
+  }
+
+  @Override
+  @GetMapping("/performance/favorite")
+  public ResponseEntity<List<IndexPerformanceDto>> getFavoriteIndexPerformance(
+      @RequestParam(defaultValue = "DAILY", required = false) PeriodType periodType) {
+    return ResponseEntity.ok(indexDataService.getFavoriteIndexPerformance(periodType));
+  }
+
+  @Override
+  @GetMapping("/export/csv")
+  public ResponseEntity<byte[]> downloadIndexData(
+      @RequestParam(required = false) UUID indexInfoId,
+      @RequestParam(required = false) LocalDate startDate,
+      @RequestParam(required = false) LocalDate endDate,
+      @RequestParam(defaultValue = "baseDate", required = false) String sortField,
+      @RequestParam(defaultValue = "desc", required = false) String sortDirection) {
+    byte[] response = indexDataService.downloadIndexData(indexInfoId, startDate, endDate, sortField,
+        sortDirection);
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION,  "attachment; filename=\"index-data.csv\"")
+        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.length))
+        .contentType(MediaType.parseMediaType("text/csv"))
+        .body(response);
   }
 }
