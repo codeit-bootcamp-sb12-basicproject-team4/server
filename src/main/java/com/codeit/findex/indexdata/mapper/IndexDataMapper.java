@@ -19,10 +19,20 @@ public interface IndexDataMapper {
   IndexDataDto toIndexDataDto(IndexData indexData);
 
   default IndexPerformanceDto toIndexPerformanceDto(IndexData indexData, IndexData previousIndexData){
-    BigDecimal versus = indexData.getClosePrice().subtract(previousIndexData.getClosePrice());
-    BigDecimal fluctuationRate = versus.divide(previousIndexData.getClosePrice(), 6, RoundingMode.HALF_UP)
-        .multiply(BigDecimal.valueOf(100))
-        .setScale(2, RoundingMode.HALF_UP);
+    BigDecimal versus;
+    BigDecimal fluctuationRate;
+    BigDecimal beforePrice;
+    if(previousIndexData == null){
+      versus = BigDecimal.ZERO;
+      fluctuationRate = BigDecimal.ZERO;
+      beforePrice = BigDecimal.ZERO;
+    }else{
+      versus = indexData.getClosePrice().subtract(previousIndexData.getClosePrice());
+      fluctuationRate = versus.divide(previousIndexData.getClosePrice(), 6, RoundingMode.HALF_UP)
+          .multiply(BigDecimal.valueOf(100))
+          .setScale(2, RoundingMode.HALF_UP);
+      beforePrice = previousIndexData.getClosePrice();
+    }
     return new IndexPerformanceDto(
         indexData.getFindex().getId(),
         indexData.getFindex().getIndexClassification(),
@@ -30,7 +40,7 @@ public interface IndexDataMapper {
         versus,
         fluctuationRate,
         indexData.getClosePrice(),
-        previousIndexData.getClosePrice());
+        beforePrice);
   }
 
   default List<Object> toCsv(IndexData indexData){
