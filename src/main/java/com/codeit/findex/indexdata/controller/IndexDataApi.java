@@ -2,6 +2,8 @@ package com.codeit.findex.indexdata.controller;
 
 import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.IndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexDataUpdateRequest;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,5 +67,27 @@ public interface IndexDataApi {
 
       @Parameter(description = "최대 랭킹 수", schema = @Schema(defaultValue = "10"))
       @RequestParam(value = "limit", defaultValue = "10") Integer limit
+  );
+
+  @Operation(
+      summary = "지수 데이터 수정",
+      description = "기존 지수 데이터를 수정합니다.",
+      responses = {
+    @ApiResponse(
+        responseCode = "200",
+        description = "지수 데이터 수정 성공",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = IndexDataDto.class))
+    ),
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효하지 않은 데이터 값 등)"),
+    @ApiResponse(responseCode = "404", description = "수정할 지수 데이터를 찾을 수 없음"),
+    @ApiResponse(responseCode = "500", description = "서버 오류")
+  }
+  )
+  ResponseEntity<IndexDataDto> updateIndexData( // 👈 리턴 타입을 다시 IndexDataDto로 원상복구합니다.
+      @Parameter(description = "지수 데이터 ID", example = "018f3a3b-1111-7000-8000-000000000011")
+      @PathVariable UUID id,
+
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "지수 데이터 수정 요청 바디")
+      IndexDataUpdateRequest request
   );
 }

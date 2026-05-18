@@ -3,19 +3,20 @@ package com.codeit.findex.indexdata.service;
 import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.IndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexDataUpdateRequest;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
 import com.codeit.findex.indexinfo.entity.Findex;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,8 @@ public class IndexDataServiceImpl implements IndexDataService {
       }
     }
 
-    return indexDataMapper.toIndexChartDto(findex, periodType, dataPoints, ma5DataPoints, ma20DataPoints);
+    return indexDataMapper.toIndexChartDto(findex, periodType, dataPoints, ma5DataPoints,
+        ma20DataPoints);
   }
 
   @Override
@@ -100,4 +102,23 @@ public class IndexDataServiceImpl implements IndexDataService {
 
     return result;
   }
+
+  @Override
+  @Transactional
+  public IndexDataDto updateIndexData(
+      UUID id,
+      IndexDataUpdateRequest request
+  ) {
+
+    IndexData indexData = indexDataRepository.findById(id)
+        .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+            "수정할 지수 데이터를 찾을 수 없습니다."
+        ));
+
+
+    IndexData updatedData = indexDataMapper.toEntity(request, indexData);
+    IndexData savedData = indexDataRepository.save(updatedData);
+
+    return indexDataMapper.toDto(savedData);  }
 }
+

@@ -2,14 +2,19 @@ package com.codeit.findex.indexdata.controller;
 
 import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.IndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexDataUpdateRequest;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import com.codeit.findex.indexdata.service.IndexDataService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +45,15 @@ public class IndexDataController implements IndexDataApi {
   ) {
     List<RankedIndexPerformanceDto> result = indexDataService.getIndexPerformanceRank(indexInfoId, periodType, limit);
     return ResponseEntity.ok(result);  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<IndexDataDto> updateIndexData(
+      @PathVariable UUID id,
+      @Valid @RequestBody IndexDataUpdateRequest request
+  ) {
+    IndexDataDto result = indexDataService.updateIndexData(id, request);
+    return ResponseEntity.ok(result);
+
+  }
 
 }

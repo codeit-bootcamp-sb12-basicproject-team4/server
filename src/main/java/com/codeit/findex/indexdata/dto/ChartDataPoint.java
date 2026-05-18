@@ -7,7 +7,6 @@ import java.time.LocalDate;
 public record ChartDataPoint(
     @Schema(description = "날짜", example = "2023-01-01")
     LocalDate date,
-
     @Schema(description = "값", example = "2850.75")
     Double value
 ) {
