@@ -1,6 +1,7 @@
 package com.codeit.findex.global.exception;
 
 import com.codeit.findex.global.common.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.NoSuchElementException;
@@ -41,6 +42,18 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e) {
     log.error("NoSuchElementException: {}", e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(
+        Instant.now().toString(),
+        HttpStatus.NOT_FOUND.value(),
+        HttpStatus.NOT_FOUND.getReasonPhrase(),
+        e.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+    log.error("EntityNotFoundException: {}", e.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(
         Instant.now().toString(),
         HttpStatus.NOT_FOUND.value(),

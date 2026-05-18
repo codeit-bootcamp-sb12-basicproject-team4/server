@@ -1,14 +1,18 @@
 package com.codeit.findex.indexdata.controller;
 
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
+import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
+import com.codeit.findex.indexdata.dto.IndexDataDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "지수 데이터 API", description = "지수 데이터 관리 API")
@@ -22,7 +26,7 @@ public interface IndexDataApi {
       @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효하지 않은 필터 값 등)"),
       @ApiResponse(responseCode = "500", description = "서버 오류")
   })
-  ResponseEntity<CursorPageResponseIndexDataDto> getIndexDataList(
+  ResponseEntity<CursorPageResponseIndexDataDto> findIndexData(
       @Parameter(name = "indexInfoId", description = "지수 정보 ID")
       @RequestParam(required = false) UUID indexInfoId,
       @Parameter(name = "startDate", description = "시작 일자")
@@ -42,4 +46,14 @@ public interface IndexDataApi {
       @RequestParam(defaultValue = "desc", required = false) String sortDirection,
       @Parameter(name = "size", description = "페이지 크기")
       @RequestParam(defaultValue = "10", required = false) int size);
+
+  @Operation(summary = "지수 데이터 등록", description = "새로운 지수 데이터를 등록합니다.", operationId = "createIndexData")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "지수 데이터 생성 성공"),
+      @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효하지 않은 데이터 값 등)"),
+      @ApiResponse(responseCode = "404", description = "참조하는 지수 정보를 찾을 수 없음"),
+      @ApiResponse(responseCode = "500", description = "서버 오류")
+  })
+  ResponseEntity<IndexDataDto> create(@RequestBody IndexDataCreateRequest request);
+
 }

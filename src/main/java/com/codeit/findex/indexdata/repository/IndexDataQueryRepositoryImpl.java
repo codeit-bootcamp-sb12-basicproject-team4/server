@@ -26,7 +26,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       UUID idAfter, String cursor, String sortField, String sortDirection, int size) {
     BooleanBuilder where = new BooleanBuilder();
     if (indexInfoId != null) {
-      where.and(indexData.id.eq(indexInfoId));
+      where.and(indexData.findex.id.eq(indexInfoId));
     }
     if (startDate != null) {
       where.and(indexData.baseDate.goe(startDate));
@@ -35,10 +35,18 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       where.and(indexData.baseDate.loe(endDate));
     }
     if (idAfter != null) {
-      where.and(indexData.id.lt(idAfter));
+      if ("desc".equalsIgnoreCase(sortDirection)) {
+        where.and(indexData.id.lt(idAfter));
+      } else {
+        where.and(indexData.id.gt(idAfter));
+      }
     }
     if (cursor != null) {
-      where.and(indexData.baseDate.lt(LocalDate.parse(cursor)));
+      if ("desc".equalsIgnoreCase(sortDirection)){
+        where.and(indexData.baseDate.lt(LocalDate.parse(cursor)));
+      }else {
+        where.and(indexData.baseDate.gt(LocalDate.parse(cursor)));
+      }
     }
 
     OrderSpecifier<?> order;
@@ -51,8 +59,9 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       case "closingPrice" -> order =
           "desc".equalsIgnoreCase(sortDirection) ? indexData.closePrice.desc()
               : indexData.closePrice.asc();
-      case "highPrice" -> order = "desc".equalsIgnoreCase(sortDirection) ? indexData.highPrice.desc()
-          : indexData.highPrice.asc();
+      case "highPrice" ->
+          order = "desc".equalsIgnoreCase(sortDirection) ? indexData.highPrice.desc()
+              : indexData.highPrice.asc();
       case "lowPrice" -> order = "desc".equalsIgnoreCase(sortDirection) ? indexData.lowPrice.desc()
           : indexData.lowPrice.asc();
       case "versus" -> order =
@@ -76,7 +85,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
         .join(indexData.findex).fetchJoin()
         .where(where)
         .orderBy(order)
-        .limit(size)
+        .limit(size + 1)
         .fetch();
 
     boolean hasNext = rows.size() > size;
@@ -87,20 +96,17 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
   }
 
   @Override
-  public Long countByFilters(UUID indexInfoId, LocalDate startDate, LocalDate endDate,  UUID idAfter,
+  public Long countByFilters(UUID indexInfoId, LocalDate startDate, LocalDate endDate, UUID idAfter,
       String cursor, String sortField, String sortDirection, int size) {
     BooleanBuilder where = new BooleanBuilder();
     if (indexInfoId != null) {
-      where.and(indexData.findex .id.eq(indexInfoId));
+      where.and(indexData.findex.id.eq(indexInfoId));
     }
     if (startDate != null) {
       where.and(indexData.baseDate.goe(startDate));
     }
     if (endDate != null) {
       where.and(indexData.baseDate.loe(endDate));
-    }
-    if (idAfter != null) {
-      where.and(indexData.id.gt(idAfter));
     }
 
     return jpaQueryFactory.select(indexData.id.count())
