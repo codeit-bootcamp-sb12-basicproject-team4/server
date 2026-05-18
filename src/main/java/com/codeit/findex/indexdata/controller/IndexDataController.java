@@ -1,5 +1,6 @@
 package com.codeit.findex.indexdata.controller;
 
+import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import com.codeit.findex.indexdata.service.IndexDataService;
@@ -24,7 +25,7 @@ public class IndexDataController implements IndexDataApi {
   @GetMapping("/{id}/chart")
   public ResponseEntity<IndexChartDto> getIndexChart(
       @PathVariable UUID id,
-      @RequestParam(value = "periodType", defaultValue = "DAILY") String periodType
+      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType
   ){
     IndexChartDto indexChartDto = indexDataService.getIndexChart(id, periodType);
     return ResponseEntity.ok(indexChartDto);
@@ -33,9 +34,9 @@ public class IndexDataController implements IndexDataApi {
   @Override
   @GetMapping("/performance/rank")
   public ResponseEntity<List<RankedIndexPerformanceDto>> getIndexPerformanceRank(
-      @RequestParam(value = "indexInfoId", required = false) UUID indexInfoId,
-      @RequestParam(value = "periodType", defaultValue = "DAILY") String periodType,
-      @RequestParam(value = "topN", defaultValue = "10")  int limit
+      @RequestParam(required = false) UUID indexInfoId,
+      @RequestParam(defaultValue = "DAILY") PeriodType periodType,
+      @RequestParam(defaultValue = "10") Integer limit
   ) {
     List<RankedIndexPerformanceDto> result = indexDataService.getIndexPerformanceRank(indexInfoId, periodType, limit);
     return ResponseEntity.ok(result);  }

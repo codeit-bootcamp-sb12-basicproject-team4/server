@@ -1,7 +1,9 @@
 package com.codeit.findex.indexdata.service;
 
+import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
@@ -10,8 +12,10 @@ import com.codeit.findex.indexinfo.entity.Findex;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +29,7 @@ public class IndexDataServiceImpl implements IndexDataService {
   private final IndexDataMapper indexDataMapper;
 
   @Override
-  public IndexChartDto getIndexChart(UUID indexInfoId, String periodType) {
-
-    if (periodType == null || periodType.trim().isEmpty()) {
-      throw new IllegalArgumentException("NULL이 들어갈 수 없습니다");
-    }
-    if (!periodType.equals("DAILY") && !periodType.equals("WEEKLY") && !periodType.equals("MONTHLY")) {
-      throw new IllegalArgumentException("올바른 기간 유형을 입력해주세요 (DAILY, WEEKLY, MONTHLY)");
-    }
+  public IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType) {
 
     List<IndexData> rawChartData = indexDataRepository.findAllByFindexIdWithFindex(indexInfoId);
 
@@ -77,9 +74,30 @@ public class IndexDataServiceImpl implements IndexDataService {
   }
 
   @Override
-  public List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId,
-      String periodType, int limit) {
-    return List.of();
-  }
+  public List<RankedIndexPerformanceDto> getIndexPerformanceRank(
+      UUID indexInfoId,
+      PeriodType periodType,
+      Integer limit
+  ) {
 
+    List<IndexPerformanceDto> performances =
+        indexDataRepository.findPerformanceRanking(
+            indexInfoId,
+            periodType,
+            limit
+        );
+
+    List<RankedIndexPerformanceDto> result = new ArrayList<>();
+
+    for (int i = 0; i < performances.size(); i++) {
+      result.add(
+          new RankedIndexPerformanceDto(
+              performances.get(i),
+              i + 1
+          )
+      );
+    }
+
+    return result;
+  }
 }

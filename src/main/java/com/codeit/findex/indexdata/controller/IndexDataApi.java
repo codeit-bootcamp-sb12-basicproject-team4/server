@@ -1,5 +1,6 @@
 package com.codeit.findex.indexdata.controller;
 
+import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,7 @@ public interface IndexDataApi {
           description = "차트 기간 유형 (DAILY, WEEKLY, MONTHLY)",
           schema = @Schema(allowableValues = {"MONTHLY", "QUARTERLY", "YEARLY"}, defaultValue = "DAILY")
       )
-      @RequestParam(value = "periodType", defaultValue = "DAILY") String periodType
+      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType
   );
 
 
@@ -60,9 +61,9 @@ public interface IndexDataApi {
           description = "성과 기간 유형 (DAILY, WEEKLY, MONTHLY)",
           schema = @Schema(allowableValues = {"DAILY", "WEEKLY", "MONTHLY"}, defaultValue = "DAILY")
       )
-      @RequestParam(value = "periodType", defaultValue = "DAILY") String periodType,
+      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType,
 
       @Parameter(description = "최대 랭킹 수", schema = @Schema(defaultValue = "10"))
-      @RequestParam(value = "limit", defaultValue = "10") int limit
+      @RequestParam(value = "limit", defaultValue = "10") Integer limit
   );
 }
