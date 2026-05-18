@@ -47,6 +47,7 @@ public class IndexDataController implements IndexDataApi {
     List<RankedIndexPerformanceDto> result = indexDataService.getIndexPerformanceRank(indexInfoId, periodType, limit);
     return ResponseEntity.ok(result);  }
 
+  @Override
   @PatchMapping("/{id}")
   public ResponseEntity<IndexDataDto> updateIndexData(
       @PathVariable UUID id,
@@ -57,6 +58,7 @@ public class IndexDataController implements IndexDataApi {
 
   }
 
+  @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteIndexData(
       @PathVariable UUID id

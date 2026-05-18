@@ -90,4 +90,26 @@ public interface IndexDataApi {
       @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "지수 데이터 수정 요청 바디")
       IndexDataUpdateRequest request
   );
+
+  @Operation(
+      summary = "지수 데이터 삭제",
+      description = "지정한 ID의 지수 데이터를 삭제합니다.",
+      responses = {
+          @ApiResponse(
+              responseCode = "204",
+              description = "지수 데이터 삭제 성공",
+              content = @Content
+          ),
+          @ApiResponse(
+              responseCode = "404", description = "삭제할 지수 데이터를 찾을 수 없음"
+          ),
+          @ApiResponse(
+              responseCode = "500", description = "서버 오류"
+          )
+      }
+  )
+  ResponseEntity<Void> deleteIndexData(
+      @Parameter(description = "지수 데이터 ID", required = true, example = "018f3a3b-1111-7000-8000-000000000011")
+      @PathVariable UUID id
+  );
 }
