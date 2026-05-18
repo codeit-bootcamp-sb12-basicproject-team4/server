@@ -6,7 +6,10 @@ import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.entity.QIndexData;
 import com.codeit.findex.indexinfo.entity.QFindex;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +48,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
         .fetchOne();
 
     if (latestDate == null) {
-      throw new IllegalStateException("지수 데이터가 존재하지 않습니다.");
+      return List.of();
     }
 
     LocalDate beforeDate = switch (periodType) {
@@ -57,6 +60,14 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
     QIndexData current = new QIndexData("current");
     QIndexData before = new QIndexData("before");
 
+    NumberTemplate<BigDecimal> fluctuationRateExpr =
+        Expressions.numberTemplate(
+            BigDecimal.class,
+            "ROUND((({0} - {1}) * 100 / {1}), 2)",
+            current.closePrice,
+            before.closePrice
+        );
+
     return queryFactory
         .select(
             Projections.constructor(
@@ -64,16 +75,10 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
                 findex.id,
                 findex.indexClassification,
                 findex.indexName,
-                current.closePrice
-                    .subtract(before.closePrice)
-                    .doubleValue(),
-                current.closePrice
-                    .subtract(before.closePrice)
-                    .divide(before.closePrice)
-                    .multiply(100)
-                    .doubleValue(),
-                current.closePrice.doubleValue(),
-                before.closePrice.doubleValue()
+                current.closePrice.subtract(before.closePrice),
+                fluctuationRateExpr,
+                current.closePrice,
+                before.closePrice
             )
         )
         .from(current)
@@ -89,13 +94,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
                 ? current.findex.id.eq(indexInfoId)
                 : null
         )
-        .orderBy(
-            current.closePrice
-                .subtract(before.closePrice)
-                .divide(before.closePrice)
-                .multiply(100)
-                .desc()
-        )
+        .orderBy(fluctuationRateExpr.desc())
         .limit(limit)
         .fetch();
   }
