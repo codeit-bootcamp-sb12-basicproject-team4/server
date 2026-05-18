@@ -11,6 +11,7 @@ import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
 import com.codeit.findex.indexinfo.entity.Findex;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,5 +120,19 @@ public class IndexDataServiceImpl implements IndexDataService {
     IndexData savedData = indexDataRepository.save(updatedData);
 
     return indexDataMapper.toDto(savedData);  }
+
+
+  @Override
+  @Transactional
+  public void deleteIndexData(UUID id) {
+
+    if (!indexDataRepository.existsById(id)) {
+      throw new EntityNotFoundException(
+          "삭제할 지수 데이터를 찾을 수 없습니다."
+      );
+    }
+
+    indexDataRepository.deleteById(id);
+  }
 }
 

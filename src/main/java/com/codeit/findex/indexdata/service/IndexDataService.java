@@ -12,4 +12,5 @@ public interface IndexDataService {
   IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType);
   List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId, PeriodType periodType, Integer limit);
   IndexDataDto updateIndexData(UUID id, IndexDataUpdateRequest request);
+  void deleteIndexData(UUID id);
 }

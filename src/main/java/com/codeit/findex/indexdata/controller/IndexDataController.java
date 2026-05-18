@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,14 @@ public class IndexDataController implements IndexDataApi {
     IndexDataDto result = indexDataService.updateIndexData(id, request);
     return ResponseEntity.ok(result);
 
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteIndexData(
+      @PathVariable UUID id
+  ) {
+    indexDataService.deleteIndexData(id);
+    return ResponseEntity.noContent().build();
   }
 
 }
