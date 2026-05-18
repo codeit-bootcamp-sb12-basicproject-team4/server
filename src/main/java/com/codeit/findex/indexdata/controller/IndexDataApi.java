@@ -83,7 +83,7 @@ public interface IndexDataApi {
     @ApiResponse(responseCode = "500", description = "서버 오류")
   }
   )
-  ResponseEntity<IndexDataDto> updateIndexData( // 👈 리턴 타입을 다시 IndexDataDto로 원상복구합니다.
+  ResponseEntity<IndexDataDto> updateIndexData(
       @Parameter(description = "지수 데이터 ID", example = "018f3a3b-1111-7000-8000-000000000011")
       @PathVariable UUID id,
 

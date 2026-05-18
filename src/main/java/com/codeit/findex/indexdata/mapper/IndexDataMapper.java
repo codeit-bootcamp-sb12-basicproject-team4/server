@@ -34,14 +34,12 @@ public interface IndexDataMapper {
       List<ChartDataPoint> ma5DataPoints,
       List<ChartDataPoint> ma20DataPoints
   );
-  // 👈 수정 구간: 모호성 해결을 위해 모든 필드의 명확한 source를 명시합니다.
   @Mapping(target = "id", source = "entity.id")
   @Mapping(target = "findex", source = "entity.findex")
   @Mapping(target = "baseDate", source = "entity.baseDate")
   @Mapping(target = "sourceType", source = "entity.sourceType")
   @Mapping(target = "createdAt", source = "entity.createdAt")
   @Mapping(target = "updatedAt", expression = "java(java.time.Instant.now())")
-  // 프론트가 새로 보내준 값들 (request 지정)
   @Mapping(target = "marketPrice", source = "request.marketPrice")
   @Mapping(target = "closePrice", source = "request.closingPrice")
   @Mapping(target = "highPrice", source = "request.highPrice")
