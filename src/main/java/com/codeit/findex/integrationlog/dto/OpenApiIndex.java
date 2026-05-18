@@ -35,6 +35,33 @@ public class OpenApiIndex {
   @JsonProperty("basDt")
   private String baseDate; // "20260514" 형식
 
+  @JsonProperty("mkp")
+  private BigDecimal marketPrice;
+
+  @JsonProperty("clpr")
+  private BigDecimal closePrice;
+
+  @JsonProperty("hipr")
+  private BigDecimal highPrice;
+
+  @JsonProperty("lopr")
+  private BigDecimal lowPrice;
+
+  @JsonProperty("vs")
+  private BigDecimal versus;
+
+  @JsonProperty("fltRt")
+  private BigDecimal fluctuationRate;
+
+  @JsonProperty("trqu")
+  private Long tradingQuantity;
+
+  @JsonProperty("trPrc")
+  private Long tradingPrice;
+
+  @JsonProperty("lstgMrktTotAmt")
+  private Long marketTotalamount;
+
   public Findex toEntity() {
     return Findex.builder()
         .indexName(this.indexName)

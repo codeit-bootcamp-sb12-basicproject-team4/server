@@ -1,13 +1,14 @@
 package com.codeit.findex.integrationlog.controller;
 
 import com.codeit.findex.integrationlog.dto.IndexResponse;
+import com.codeit.findex.integrationlog.dto.IndexdataIntegrationRequest;
 import com.codeit.findex.integrationlog.service.IntegrationFacade;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,21 @@ public class IntegrationController {
     }
     return ResponseEntity.ok(results);
   }
+
+  @PostMapping("/index-data")
+  public ResponseEntity<List<IndexResponse>> syncIndexData(
+      @RequestBody IndexdataIntegrationRequest syncRequest,
+      HttpServletRequest request
+  ) {
+    String clientIp = getClientIp(request);
+
+    List<IndexResponse> results = integrationFacade.syncIndexData(syncRequest, clientIp);
+    if (results.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(results);
+  }
+
   private String getClientIp(HttpServletRequest request) {
     String ip = request.getHeader("X-Forwarded-For");
     if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
