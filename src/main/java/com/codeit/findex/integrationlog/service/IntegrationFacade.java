@@ -17,11 +17,11 @@ public class IntegrationFacade {
   private final IndexinfoService indexinfoService;
   private final IntegrationLogService integrationLogService;
 
-  public List<IndexResponse> syncIndexInfo(String clientIp) {
+  public List<IndexResponse> syncIndexInfo(String worker) {
     List<OpenApiIndex> rawData = openApiClient.fetchIndexInfo(LocalDate.now().minusDays(5).format(DateTimeFormatter.ofPattern("yyyyMMdd")));
     if (rawData.isEmpty()) {
       return Collections.emptyList();
     }
-    return integrationLogService.createAll(indexinfoService.processDatabaseUpdate(rawData, clientIp));
+    return integrationLogService.createAll(indexinfoService.processDatabaseUpdate(rawData, worker));
   }
 }
