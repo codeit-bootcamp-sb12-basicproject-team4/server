@@ -11,7 +11,6 @@ import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
 import com.codeit.findex.indexinfo.entity.Findex;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
