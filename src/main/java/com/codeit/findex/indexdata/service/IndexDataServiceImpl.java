@@ -2,6 +2,7 @@ package com.codeit.findex.indexdata.service;
 
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
@@ -74,4 +75,11 @@ public class IndexDataServiceImpl implements IndexDataService {
 
     return indexDataMapper.toIndexChartDto(findex, periodType, dataPoints, ma5DataPoints, ma20DataPoints);
   }
+
+  @Override
+  public List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId,
+      String periodType, int limit) {
+    return List.of();
   }
+
+}
