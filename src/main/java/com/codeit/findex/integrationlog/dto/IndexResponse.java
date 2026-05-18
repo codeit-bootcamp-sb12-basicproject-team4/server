@@ -17,11 +17,19 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class IndexResponse {
+
   private UUID id;
+
   private JobType jobType;
+
   private UUID indexInfoId;
+
   private LocalDate targetDate;
+
   private String worker;
+
   private Instant jobTime;
+
   private Result result;
+
 }

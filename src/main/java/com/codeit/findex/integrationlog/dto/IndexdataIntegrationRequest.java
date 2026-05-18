@@ -15,7 +15,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class IndexdataIntegrationRequest {
+
   private List<UUID> indexInfoIds;
+
   private LocalDate baseDateFrom;
+
   private LocalDate baseDateTo;
+
 }
