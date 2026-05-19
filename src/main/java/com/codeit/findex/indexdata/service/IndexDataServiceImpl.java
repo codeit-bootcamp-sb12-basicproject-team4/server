@@ -13,10 +13,14 @@ import com.codeit.findex.indexdata.repository.IndexDataRepository;
 import com.codeit.findex.indexinfo.entity.Findex;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.time.temporal.WeekFields;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,20 +44,21 @@ public class IndexDataServiceImpl implements IndexDataService {
 
     Findex findex = rawChartData.get(0).getFindex();
 
-    List<ChartDataPoint> dataPoints = indexDataMapper.toChartDataPointList(rawChartData);
+    List<IndexData> periodChartData = getChartDataByPeriod(rawChartData, periodType);
+    List<ChartDataPoint> dataPoints = indexDataMapper.toChartDataPointList(periodChartData);
 
     List<ChartDataPoint> ma5DataPoints = new ArrayList<>();
     List<ChartDataPoint> ma20DataPoints = new ArrayList<>();
 
-    for (int i = 0; i < rawChartData.size(); i++) {
-      IndexData current = rawChartData.get(i);
+    for (int i = 0; i < periodChartData.size(); i++) {
+      IndexData current = periodChartData.get(i);
       LocalDate date = current.getBaseDate();
       double currentPrice = current.getClosePrice().doubleValue();
 
       if (i >= 4) {
         double sum = 0;
         for (int j = i - 4; j <= i; j++) {
-          sum += rawChartData.get(j).getClosePrice().doubleValue();
+          sum += periodChartData.get(j).getClosePrice().doubleValue();
         }
         ma5DataPoints.add(new ChartDataPoint(date, sum / 5.0));
       } else {
@@ -63,7 +68,7 @@ public class IndexDataServiceImpl implements IndexDataService {
       if (i >= 19) {
         double sum = 0;
         for (int j = i - 19; j <= i; j++) {
-          sum += rawChartData.get(j).getClosePrice().doubleValue();
+          sum += periodChartData.get(j).getClosePrice().doubleValue();
         }
         ma20DataPoints.add(new ChartDataPoint(date, sum / 20.0));
       } else {
@@ -73,6 +78,39 @@ public class IndexDataServiceImpl implements IndexDataService {
 
     return indexDataMapper.toIndexChartDto(findex, periodType, dataPoints, ma5DataPoints,
         ma20DataPoints);
+  }
+
+  private List<IndexData> getChartDataByPeriod(List<IndexData> rawChartData, PeriodType periodType) {
+    return switch (periodType) {
+      case DAILY -> rawChartData;
+      case WEEKLY -> getLastDataPointByWeek(rawChartData);
+      case MONTHLY -> getLastDataPointByMonth(rawChartData);
+    };
+  }
+
+  private List<IndexData> getLastDataPointByWeek(List<IndexData> rawChartData) {
+    WeekFields weekFields = WeekFields.ISO;
+    Map<String, IndexData> weeklyData = new LinkedHashMap<>();
+
+    for (IndexData indexData : rawChartData) {
+      LocalDate baseDate = indexData.getBaseDate();
+      int weekBasedYear = baseDate.get(weekFields.weekBasedYear());
+      int weekOfYear = baseDate.get(weekFields.weekOfWeekBasedYear());
+      String weekKey = weekBasedYear + "-" + weekOfYear;
+      weeklyData.put(weekKey, indexData);
+    }
+
+    return new ArrayList<>(weeklyData.values());
+  }
+
+  private List<IndexData> getLastDataPointByMonth(List<IndexData> rawChartData) {
+    Map<YearMonth, IndexData> monthlyData = new LinkedHashMap<>();
+
+    for (IndexData indexData : rawChartData) {
+      monthlyData.put(YearMonth.from(indexData.getBaseDate()), indexData);
+    }
+
+    return new ArrayList<>(monthlyData.values());
   }
 
   @Override
@@ -135,4 +173,3 @@ public class IndexDataServiceImpl implements IndexDataService {
     indexDataRepository.deleteById(id);
   }
 }
-
