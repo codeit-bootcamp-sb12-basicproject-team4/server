@@ -102,7 +102,7 @@ public class IndexDataController implements IndexDataApi {
   @Override
   @GetMapping("/performance/favorite")
   public ResponseEntity<List<IndexPerformanceDto>> getFavoriteIndexPerformance(
-      @RequestParam(defaultValue = "DAILY", required = false) UnitPeriodType unitPeriodType) {
+      @RequestParam(defaultValue = "DAILY", required = false, name = "periodType") UnitPeriodType unitPeriodType) {
     return ResponseEntity.ok(indexDataService.getFavoriteIndexPerformance(unitPeriodType));
   }
 
