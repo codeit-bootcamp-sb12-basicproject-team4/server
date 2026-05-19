@@ -1,6 +1,7 @@
 package com.codeit.findex.indexdata.mapper;
 
 import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.IndexDataDto;
@@ -32,7 +33,7 @@ public interface IndexDataMapper {
   @Mapping(target = "ma20DataPoints", source = "ma20DataPoints")
   IndexChartDto toIndexChartDto(
       Findex findex,
-      PeriodType periodType,
+      UnitPeriodType periodType,
       List<ChartDataPoint> dataPoints,
       List<ChartDataPoint> ma5DataPoints,
       List<ChartDataPoint> ma20DataPoints

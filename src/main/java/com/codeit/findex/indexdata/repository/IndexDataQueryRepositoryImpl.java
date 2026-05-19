@@ -1,5 +1,8 @@
 package com.codeit.findex.indexdata.repository;
 
+import static com.codeit.findex.global.common.UnitPeriodType.QUARTERLY;
+import static com.codeit.findex.global.common.UnitPeriodType.YEARLY;
+
 import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
@@ -60,8 +63,6 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       case DAILY -> latestDate.minusDays(1);
       case WEEKLY -> latestDate.minusWeeks(1);
       case MONTHLY -> latestDate.minusMonths(1);
-      case QUARTERLY -> latestDate.minusMonths(3);
-      case YEARLY -> latestDate.minusYears(1);
     };
 
     QIndexData current = new QIndexData("current");

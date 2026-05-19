@@ -1,6 +1,7 @@
 package com.codeit.findex.indexdata.controller;
 
 import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
@@ -39,7 +40,7 @@ public class IndexDataController implements IndexDataApi {
   @GetMapping("/{id}/chart")
   public ResponseEntity<IndexChartDto> getIndexChart(
       @PathVariable UUID id,
-      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType
+      @RequestParam(value = "periodType", defaultValue = "DAILY") UnitPeriodType periodType
   ){
     IndexChartDto indexChartDto = indexDataService.getIndexChart(id, periodType);
     return ResponseEntity.ok(indexChartDto);

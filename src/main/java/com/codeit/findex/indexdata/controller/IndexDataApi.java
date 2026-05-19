@@ -1,6 +1,7 @@
 package com.codeit.findex.indexdata.controller;
 
 import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
@@ -46,7 +47,7 @@ public interface IndexDataApi {
           description = "차트 기간 유형 (DAILY, WEEKLY, MONTHLY)",
           schema = @Schema(allowableValues = {"MONTHLY", "QUARTERLY", "YEARLY"}, defaultValue = "DAILY")
       )
-      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType
+      @RequestParam(value = "periodType", defaultValue = "DAILY") UnitPeriodType periodType
   );
 
 

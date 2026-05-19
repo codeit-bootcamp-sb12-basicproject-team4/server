@@ -1,7 +1,11 @@
 package com.codeit.findex.indexdata.service;
 
+import static com.codeit.findex.global.common.UnitPeriodType.QUARTERLY;
+import static com.codeit.findex.global.common.UnitPeriodType.YEARLY;
+
 import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.global.common.SourceType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
@@ -47,7 +51,7 @@ public class IndexDataServiceImpl implements IndexDataService {
   private final IndexinfoRepository indexinfoRepository;
 
   @Override
-  public IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType) {
+  public IndexChartDto getIndexChart(UUID indexInfoId, UnitPeriodType periodType) {
 
     List<IndexData> rawChartData = indexDataRepository.findAllByFindexIdWithFindex(indexInfoId);
 
@@ -135,10 +139,10 @@ public class IndexDataServiceImpl implements IndexDataService {
 
   private List<IndexData> aggregateByPeriod(
       List<IndexData> data,
-      PeriodType periodType
+      UnitPeriodType periodType
   ) {
 
-    if (periodType == PeriodType.DAILY) {
+    if (periodType == UnitPeriodType.MONTHLY) {
       return data;
     }
 
@@ -160,7 +164,7 @@ public class IndexDataServiceImpl implements IndexDataService {
 
   private String getGroupKey(
       LocalDate date,
-      PeriodType periodType
+      UnitPeriodType periodType
   ) {
 
     switch (periodType) {
