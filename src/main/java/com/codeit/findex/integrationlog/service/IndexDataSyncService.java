@@ -1,4 +1,4 @@
-package com.codeit.findex.indexdata.service;
+package com.codeit.findex.integrationlog.service;
 
 import com.codeit.findex.global.common.SourceType;
 import com.codeit.findex.indexdata.entity.IndexData;

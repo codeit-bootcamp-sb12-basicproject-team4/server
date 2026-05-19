@@ -1,6 +1,5 @@
 package com.codeit.findex.integrationlog.service;
 
-import com.codeit.findex.indexdata.service.IndexDataSyncService;
 import com.codeit.findex.indexinfo.service.IndexinfoService;
 import com.codeit.findex.integrationlog.dto.IndexResponse;
 import com.codeit.findex.integrationlog.dto.IndexdataIntegrationRequest;

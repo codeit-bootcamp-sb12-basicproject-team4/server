@@ -1,4 +1,4 @@
-package com.codeit.findex.indexdata.service;
+package com.codeit.findex.integrationlog.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
