@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +23,16 @@ public class AutoIntegrationController {
 
   private final AutoIntegrationService autoIntegrationService;
 
-  @PutMapping("/{findexId}/active")
+  @PatchMapping("/{findexId}")
   @Operation(summary = "자동 연동 설정 활성화/비활성화 수정",
       description = "특정 지수의 자동 연동 여부(isActive)를 토글 수정합니다.")
   public ResponseEntity<AutoIntegrationResponseDto> updateActiveStatus(
       @PathVariable("findexId") UUID findexId,
-      @RequestParam("isActive") Boolean isActive) {
+      @RequestBody UpdateActiveStatusRequest request) {
 
-    log.info("API 호출 - 자동 연동 설정 수정: 지수ID={}, 변경상태={}", findexId, isActive);
+    log.info("API 호출 - 자동 연동 설정 수정: 지수ID={}, 변경상태={}", findexId, request.getIsActive());
     AutoIntegrationResponseDto response
-        = autoIntegrationService.updateActiveStatus(findexId, isActive);
+        = autoIntegrationService.updateActiveStatus(findexId, request.getIsActive());
     return ResponseEntity.ok(response);
   }
 
@@ -51,5 +53,11 @@ public class AutoIntegrationController {
     List<AutoIntegrationResponseDto> responses
         = autoIntegrationService.getAutoIntegrations(findexId, isActive, lastId, size);
     return ResponseEntity.ok(responses);
+  }
+
+  @Getter
+  @NoArgsConstructor
+  public static class UpdateActiveStatusRequest {
+    private Boolean isActive;
   }
 }

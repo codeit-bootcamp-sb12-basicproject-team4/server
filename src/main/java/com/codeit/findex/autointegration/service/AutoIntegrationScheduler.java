@@ -20,7 +20,7 @@ public class AutoIntegrationScheduler {
 
   @Scheduled(cron = "0 0 2 * * ?") // 매일 새벽 2시 정기 실행
   public void runAutoIntegrationBatch() {
-    log.info("⏰ [배치 스타트] 주기적 지수 데이터 자동 연동 스케줄러를 시작합니다.");
+    log.info(" [배치 스타트] 주기적 지수 데이터 자동 연동 스케줄러를 시작합니다.");
 
 
     List<AutoIntegration> activeConfigs = autoIntegrationRepository.findByIsActiveTrue();
@@ -40,6 +40,6 @@ public class AutoIntegrationScheduler {
       log.error("자동 연동 배치 중 에러 발생: {}", e.getMessage());
     }
 
-    log.info("⏰ [배치 종료] 지수 데이터 자동 연동 작업이 끝났습니다.");
+    log.info("[배치 종료] 지수 데이터 자동 연동 작업이 끝났습니다.");
   }
 }

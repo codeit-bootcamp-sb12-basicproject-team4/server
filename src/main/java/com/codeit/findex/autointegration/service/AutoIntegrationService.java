@@ -5,6 +5,7 @@ import com.codeit.findex.autointegration.entity.AutoIntegration;
 import com.codeit.findex.autointegration.repository.AutoIntegrationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class AutoIntegrationService {
 
     AutoIntegration autoIntegration = autoIntegrationRepository.findById(findexId)
         .orElseThrow(() ->
-            new EntityNotFoundException("해당 지수의 연동 설정이 존재하지 않습니다. ID: " + findexId));
+            new NoSuchElementException("해당 지수의 연동 설정이 존재하지 않습니다. ID: " + findexId));
 
     autoIntegration.updateActive(isActive);
 
