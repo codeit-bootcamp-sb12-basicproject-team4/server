@@ -14,9 +14,13 @@ import com.codeit.findex.indexinfo.entity.Findex;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,41 +42,22 @@ public class IndexDataServiceImpl implements IndexDataService {
       throw new NoSuchElementException("해당 지수에 대한 데이터가 존재하지 않습니다");
     }
 
-    Findex findex = rawChartData.get(0).getFindex();
+    List<IndexData> chartData = aggregateByPeriod(rawChartData, periodType);
+    Findex findex = chartData.get(0).getFindex();
 
-    List<ChartDataPoint> dataPoints = indexDataMapper.toChartDataPointList(rawChartData);
+    List<ChartDataPoint> dataPoints = indexDataMapper.toChartDataPointList(chartData);
 
-    List<ChartDataPoint> ma5DataPoints = new ArrayList<>();
-    List<ChartDataPoint> ma20DataPoints = new ArrayList<>();
+    List<ChartDataPoint> ma5DataPoints = calculateMovingAverage(chartData, 5);
 
-    for (int i = 0; i < rawChartData.size(); i++) {
-      IndexData current = rawChartData.get(i);
-      LocalDate date = current.getBaseDate();
-      double currentPrice = current.getClosePrice().doubleValue();
+    List<ChartDataPoint> ma20DataPoints = calculateMovingAverage(chartData, 20);
 
-      if (i >= 4) {
-        double sum = 0;
-        for (int j = i - 4; j <= i; j++) {
-          sum += rawChartData.get(j).getClosePrice().doubleValue();
-        }
-        ma5DataPoints.add(new ChartDataPoint(date, sum / 5.0));
-      } else {
-        ma5DataPoints.add(new ChartDataPoint(date, currentPrice));
-      }
-
-      if (i >= 19) {
-        double sum = 0;
-        for (int j = i - 19; j <= i; j++) {
-          sum += rawChartData.get(j).getClosePrice().doubleValue();
-        }
-        ma20DataPoints.add(new ChartDataPoint(date, sum / 20.0));
-      } else {
-        ma20DataPoints.add(new ChartDataPoint(date, currentPrice));
-      }
-    }
-
-    return indexDataMapper.toIndexChartDto(findex, periodType, dataPoints, ma5DataPoints,
-        ma20DataPoints);
+    return indexDataMapper.toIndexChartDto(
+        findex,
+        periodType,
+        dataPoints,
+        ma5DataPoints,
+        ma20DataPoints
+    );
   }
 
   @Override
@@ -134,5 +119,106 @@ public class IndexDataServiceImpl implements IndexDataService {
 
     indexDataRepository.deleteById(id);
   }
+
+  private List<IndexData> aggregateByPeriod(
+      List<IndexData> data,
+      PeriodType periodType
+  ) {
+
+    if (periodType == PeriodType.DAILY) {
+      return data;
+    }
+
+    Map<String, IndexData> grouped =
+        data.stream()
+            .collect(Collectors.toMap(
+                d -> getGroupKey(d.getBaseDate(), periodType),
+                Function.identity(),
+                (a, b) ->
+                    a.getBaseDate().isAfter(b.getBaseDate())
+                        ? a
+                        : b,
+
+                LinkedHashMap::new
+            ));
+
+    return new ArrayList<>(grouped.values());
+  }
+
+  private String getGroupKey(
+      LocalDate date,
+      PeriodType periodType
+  ) {
+
+    switch (periodType) {
+
+      case MONTHLY:
+        return date.getYear()
+            + "-"
+            + date.getMonthValue();
+
+      case QUARTERLY:
+        int quarter =
+            (date.getMonthValue() - 1) / 3 + 1;
+
+        return date.getYear()
+            + "-Q"
+            + quarter;
+
+      case YEARLY:
+        return String.valueOf(date.getYear());
+
+      default:
+        return date.toString();
+    }
+  }
+
+
+  private List<ChartDataPoint> calculateMovingAverage(
+      List<IndexData> data,
+      int period
+  ) {
+
+    List<ChartDataPoint> result = new ArrayList<>();
+
+    for (int i = 0; i < data.size(); i++) {
+
+      LocalDate date = data.get(i).getBaseDate();
+      double currentPrice =
+          data.get(i)
+              .getClosePrice()
+              .doubleValue();
+
+      if (i >= period - 1) {
+
+        double sum = 0;
+
+        for (int j = i - (period - 1); j <= i; j++) {
+          sum += data.get(j)
+              .getClosePrice()
+              .doubleValue();
+        }
+
+        result.add(
+            new ChartDataPoint(
+                date,
+                sum / period
+            )
+        );
+
+      } else {
+
+        result.add(
+            new ChartDataPoint(
+                date,
+                currentPrice
+            )
+        );
+      }
+    }
+
+    return result;
+  }
+
 }
 

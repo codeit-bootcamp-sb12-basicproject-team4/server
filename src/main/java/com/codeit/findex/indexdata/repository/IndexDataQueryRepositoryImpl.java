@@ -55,6 +55,8 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       case DAILY -> latestDate.minusDays(1);
       case WEEKLY -> latestDate.minusWeeks(1);
       case MONTHLY -> latestDate.minusMonths(1);
+      case QUARTERLY -> latestDate.minusMonths(3);
+      case YEARLY -> latestDate.minusYears(1);
     };
 
     QIndexData current = new QIndexData("current");
