@@ -96,7 +96,7 @@ public class IndexDataServiceImpl implements IndexDataService {
   ) {
 
     IndexData indexData = indexDataRepository.findById(id)
-        .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+        .orElseThrow(() -> new EntityNotFoundException(
             "수정할 지수 데이터를 찾을 수 없습니다."
         ));
 
