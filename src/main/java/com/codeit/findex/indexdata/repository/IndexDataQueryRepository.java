@@ -1,6 +1,6 @@
 package com.codeit.findex.indexdata.repository;
 
-import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import java.time.LocalDate;
@@ -13,7 +13,7 @@ public interface IndexDataQueryRepository {
 
   List<IndexData> findAllByFindexIdWithFindex(UUID findexId);
   
-  List<IndexPerformanceDto> findPerformanceRanking(UUID indexInfoId, PeriodType periodType, Integer limit);
+  List<IndexPerformanceDto> findPerformanceRanking(UUID indexInfoId, UnitPeriodType unitPeriodType, Integer limit);
 
   Slice<IndexData> findAllWithCursor(UUID indexInfoId, LocalDate startDate,
       LocalDate endDate, UUID idAfter, String cursor, String sortField, String sortDirection,

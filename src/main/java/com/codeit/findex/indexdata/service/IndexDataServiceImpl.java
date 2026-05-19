@@ -1,11 +1,8 @@
 package com.codeit.findex.indexdata.service;
 
-import static com.codeit.findex.global.common.UnitPeriodType.QUARTERLY;
-import static com.codeit.findex.global.common.UnitPeriodType.YEARLY;
-
 import com.codeit.findex.global.common.PeriodType;
-import com.codeit.findex.global.common.SourceType;
 import com.codeit.findex.global.common.UnitPeriodType;
+import com.codeit.findex.global.common.SourceType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
@@ -51,7 +48,7 @@ public class IndexDataServiceImpl implements IndexDataService {
   private final IndexinfoRepository indexinfoRepository;
 
   @Override
-  public IndexChartDto getIndexChart(UUID indexInfoId, UnitPeriodType periodType) {
+  public IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType) {
 
     List<IndexData> rawChartData = indexDataRepository.findAllByFindexIdWithFindex(indexInfoId);
 
@@ -80,14 +77,14 @@ public class IndexDataServiceImpl implements IndexDataService {
   @Override
   public List<RankedIndexPerformanceDto> getIndexPerformanceRank(
       UUID indexInfoId,
-      PeriodType periodType,
+      UnitPeriodType unitPeriodType,
       Integer limit
   ) {
 
     List<IndexPerformanceDto> performances =
         indexDataRepository.findPerformanceRanking(
             indexInfoId,
-            periodType,
+            unitPeriodType,
             limit
         );
 
@@ -139,10 +136,10 @@ public class IndexDataServiceImpl implements IndexDataService {
 
   private List<IndexData> aggregateByPeriod(
       List<IndexData> data,
-      UnitPeriodType periodType
+      PeriodType periodType
   ) {
 
-    if (periodType == UnitPeriodType.MONTHLY) {
+    if (periodType == PeriodType.MONTHLY) {
       return data;
     }
 
@@ -164,7 +161,7 @@ public class IndexDataServiceImpl implements IndexDataService {
 
   private String getGroupKey(
       LocalDate date,
-      UnitPeriodType periodType
+      PeriodType periodType
   ) {
 
     switch (periodType) {
@@ -287,21 +284,21 @@ public class IndexDataServiceImpl implements IndexDataService {
   }
 
   @Override
-  public List<IndexPerformanceDto> getFavoriteIndexPerformance(PeriodType periodType) {
+  public List<IndexPerformanceDto> getFavoriteIndexPerformance(UnitPeriodType unitPeriodType) {
     List<Findex> favoriteFindex = indexinfoRepository.findAllByFavoriteTrue();
 
     List<List<IndexData>> period = new ArrayList<>();
-    if (periodType == PeriodType.DAILY) {
+    if (unitPeriodType == UnitPeriodType.DAILY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusDays(1), LocalDate.now()))
           .toList();
-    } else if (periodType == PeriodType.WEEKLY) {
+    } else if (unitPeriodType == UnitPeriodType.WEEKLY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusWeeks(1), LocalDate.now()))
           .toList();
-    } else if (periodType == PeriodType.MONTHLY) {
+    } else if (unitPeriodType == UnitPeriodType.MONTHLY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusMonths(1), LocalDate.now()))

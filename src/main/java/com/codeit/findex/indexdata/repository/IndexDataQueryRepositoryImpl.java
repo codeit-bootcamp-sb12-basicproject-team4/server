@@ -1,9 +1,6 @@
 package com.codeit.findex.indexdata.repository;
 
-import static com.codeit.findex.global.common.UnitPeriodType.QUARTERLY;
-import static com.codeit.findex.global.common.UnitPeriodType.YEARLY;
-
-import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.UnitPeriodType;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.entity.QIndexData;
@@ -46,7 +43,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
   @Override
   public List<IndexPerformanceDto> findPerformanceRanking(
       UUID indexInfoId,
-      PeriodType periodType,
+      UnitPeriodType unitPeriodType,
       Integer limit
   ) {
 
@@ -59,7 +56,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       return List.of();
     }
 
-    LocalDate beforeDate = switch (periodType) {
+    LocalDate beforeDate = switch (unitPeriodType) {
       case DAILY -> latestDate.minusDays(1);
       case WEEKLY -> latestDate.minusWeeks(1);
       case MONTHLY -> latestDate.minusMonths(1);

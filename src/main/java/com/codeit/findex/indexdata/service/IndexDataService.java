@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IndexDataService {
-  IndexChartDto getIndexChart(UUID indexInfoId, UnitPeriodType periodType);
+  IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType);
   
-  List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId, PeriodType periodType, Integer limit);
+  List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId, UnitPeriodType PeriodType, Integer limit);
   
   IndexDataDto updateIndexData(UUID id, IndexDataUpdateRequest request);
   void deleteIndexData(UUID id);
@@ -28,7 +28,7 @@ public interface IndexDataService {
 
   IndexDataDto create(@Valid IndexDataCreateRequest request);
 
-  List<IndexPerformanceDto> getFavoriteIndexPerformance(PeriodType periodType);
+  List<IndexPerformanceDto> getFavoriteIndexPerformance(UnitPeriodType unitPeriodType);
 
   byte[] downloadIndexData(UUID indexInfoId, LocalDate startDate, LocalDate endDate, String sortField, String sortDirection);
 }

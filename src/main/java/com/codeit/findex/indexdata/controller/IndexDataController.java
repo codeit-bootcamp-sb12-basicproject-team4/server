@@ -1,7 +1,7 @@
 package com.codeit.findex.indexdata.controller;
 
-import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.global.common.UnitPeriodType;
+import com.codeit.findex.global.common.PeriodType;
 import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
 import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
@@ -40,7 +40,7 @@ public class IndexDataController implements IndexDataApi {
   @GetMapping("/{id}/chart")
   public ResponseEntity<IndexChartDto> getIndexChart(
       @PathVariable UUID id,
-      @RequestParam(value = "periodType", defaultValue = "DAILY") UnitPeriodType periodType
+      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType
   ){
     IndexChartDto indexChartDto = indexDataService.getIndexChart(id, periodType);
     return ResponseEntity.ok(indexChartDto);
@@ -50,10 +50,11 @@ public class IndexDataController implements IndexDataApi {
   @GetMapping("/performance/rank")
   public ResponseEntity<List<RankedIndexPerformanceDto>> getIndexPerformanceRank(
       @RequestParam(required = false) UUID indexInfoId,
-      @RequestParam(defaultValue = "DAILY") PeriodType periodType,
+      @RequestParam(defaultValue = "DAILY") UnitPeriodType PeriodType,
       @RequestParam(defaultValue = "10") Integer limit
   ) {
-    List<RankedIndexPerformanceDto> result = indexDataService.getIndexPerformanceRank(indexInfoId, periodType, limit);
+    List<RankedIndexPerformanceDto> result = indexDataService.getIndexPerformanceRank(indexInfoId,
+        PeriodType, limit);
     return ResponseEntity.ok(result);  }
 
   @Override
@@ -101,8 +102,8 @@ public class IndexDataController implements IndexDataApi {
   @Override
   @GetMapping("/performance/favorite")
   public ResponseEntity<List<IndexPerformanceDto>> getFavoriteIndexPerformance(
-      @RequestParam(defaultValue = "DAILY", required = false) PeriodType periodType) {
-    return ResponseEntity.ok(indexDataService.getFavoriteIndexPerformance(periodType));
+      @RequestParam(defaultValue = "DAILY", required = false) UnitPeriodType unitPeriodType) {
+    return ResponseEntity.ok(indexDataService.getFavoriteIndexPerformance(unitPeriodType));
   }
 
   @Override

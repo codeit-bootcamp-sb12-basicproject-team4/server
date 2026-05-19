@@ -47,7 +47,7 @@ public interface IndexDataApi {
           description = "차트 기간 유형 (DAILY, WEEKLY, MONTHLY)",
           schema = @Schema(allowableValues = {"MONTHLY", "QUARTERLY", "YEARLY"}, defaultValue = "DAILY")
       )
-      @RequestParam(value = "periodType", defaultValue = "DAILY") UnitPeriodType periodType
+      @RequestParam(value = "unitPeriodType", defaultValue = "DAILY") PeriodType periodType
   );
 
 
@@ -70,7 +70,7 @@ public interface IndexDataApi {
           description = "성과 기간 유형 (DAILY, WEEKLY, MONTHLY)",
           schema = @Schema(allowableValues = {"DAILY", "WEEKLY", "MONTHLY"}, defaultValue = "DAILY")
       )
-      @RequestParam(value = "periodType", defaultValue = "DAILY") PeriodType periodType,
+      @RequestParam(value = "unitPeriodType", defaultValue = "DAILY") UnitPeriodType PeriodType,
 
       @Parameter(description = "최대 랭킹 수", schema = @Schema(defaultValue = "10"))
       @RequestParam(value = "limit", defaultValue = "10") Integer limit
@@ -164,7 +164,7 @@ public interface IndexDataApi {
   })
   ResponseEntity<List<IndexPerformanceDto>> getFavoriteIndexPerformance(
       @Parameter(name = "periodType", description = "성과 기간 유형 (DAILY, WEEKLY, MONTHLY)")
-      @RequestParam(defaultValue = "DAILY", required = false) PeriodType periodType
+      @RequestParam(defaultValue = "DAILY", required = false) UnitPeriodType unitPeriodType
   );
 
   @Operation(summary = "지수 데이터 CSV export", description = "지수 데이터를 CSV 파일로 export합니다.", operationId = "downloadIndexData")
