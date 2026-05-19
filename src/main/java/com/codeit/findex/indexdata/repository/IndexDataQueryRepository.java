@@ -8,8 +8,18 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.data.domain.Slice;
+import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
+import com.codeit.findex.indexdata.entity.IndexData;
+import java.util.List;
+import java.util.UUID;
+
 
 public interface IndexDataQueryRepository {
+
+  List<IndexData> findAllByFindexIdWithFindex(UUID findexId);
+  
+  List<IndexPerformanceDto> findPerformanceRanking(UUID indexInfoId, PeriodType periodType, Integer limit);
 
   Slice<IndexData> findAllWithCursor(UUID indexInfoId, LocalDate startDate,
       LocalDate endDate, UUID idAfter, String cursor, String sortField, String sortDirection,
