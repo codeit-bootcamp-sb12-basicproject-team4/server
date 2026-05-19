@@ -9,23 +9,8 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import com.codeit.findex.indexdata.dto.IndexChartDto;
-import com.codeit.findex.indexdata.dto.IndexDataDto;
-import com.codeit.findex.indexdata.dto.IndexDataUpdateRequest;
-import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
-import java.util.List;
-import java.util.UUID;
 
 public interface IndexDataService {
-  
-  IndexChartDto getIndexChart(UUID indexInfoId, PeriodType periodType);
-  
-  List<RankedIndexPerformanceDto> getIndexPerformanceRank(UUID indexInfoId, PeriodType periodType, Integer limit);
-  
-  IndexDataDto updateIndexData(UUID id, IndexDataUpdateRequest request);
-  
-  void deleteIndexData(UUID id);
-  
   CursorPageResponseIndexDataDto getIndexDataList(UUID indexInfoId,
       LocalDate startDate, LocalDate endDate, UUID idAfter, String cursor, String sortField,
       String sortDirection, int size);
