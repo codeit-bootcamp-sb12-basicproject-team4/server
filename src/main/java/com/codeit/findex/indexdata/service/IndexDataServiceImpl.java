@@ -77,7 +77,7 @@ public class IndexDataServiceImpl implements IndexDataService {
             "지수 정보를 찾을 수 없습니다. ID:  " + request.indexInfoId()));
     indexDataRepository.findByIdAndBaseDate(findex.getId(), request.baseDate())
         .orElseThrow(
-            () -> new IllegalArgumentException("이미 해당 날짜에 데이터가 존재합니다: " + request.baseDate()));
+            () -> new IllegalStateException("이미 해당 날짜에 데이터가 존재합니다: " + request.baseDate()));
 
     IndexData indexData = new IndexData(findex, request.baseDate(), SourceType.USER,
         request.marketPrice(), request.closingPrice(), request.highPrice(), request.lowPrice(),
@@ -125,6 +125,10 @@ public class IndexDataServiceImpl implements IndexDataService {
   @Override
   public byte[] downloadIndexData(UUID indexInfoId, LocalDate startDate, LocalDate endDate,
       String sortField, String sortDirection) {
+    if (!"desc".equalsIgnoreCase(sortDirection) && !"asc".equalsIgnoreCase(sortDirection)) {
+      throw new IllegalArgumentException("Invalid value '" + sortDirection
+          + "' for orders given; Has to be either 'desc' or 'asc' (case insensitive)");
+    }
     List<IndexData> indexDataDtoList = indexDataRepository.findAllByCondition(indexInfoId,
         startDate, endDate, sortField, sortDirection);
     String[] header = {"기준일자", "시가", "종가", "고가", "저가", "전일대비등락", "등락률", "거래량", "거래대금", "시가총액"};

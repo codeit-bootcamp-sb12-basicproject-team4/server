@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(
         Instant.now().toString(),
         HttpStatus.BAD_REQUEST.value(),
-        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+        "IllegalArgumentException",
         e.getMessage()
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -56,11 +56,23 @@ public class GlobalExceptionHandler {
     log.error("EntityNotFoundException: {}", e.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(
         Instant.now().toString(),
-        404,
+        HttpStatus.NOT_FOUND.value(),
         "EntityNotFoundException",
         e.getMessage()
     );
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(errorResponse);
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
+    log.error("IllegalStateException: {}", e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(
+        Instant.now().toString(),
+        HttpStatus.BAD_REQUEST.value(),
+        "IllegalStateException",
+        e.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)
