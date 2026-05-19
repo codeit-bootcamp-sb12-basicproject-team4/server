@@ -29,7 +29,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -91,7 +90,7 @@ public class IndexDataServiceImpl implements IndexDataService {
   @Override
   public List<IndexPerformanceDto> getFavoriteIndexPerformance(PeriodType periodType) {
     List<Findex> favoriteFindex = indexinfoRepository.findAllByFavoriteTrue();
-    log.info("favoriteFindex: {}", favoriteFindex.get(0).getIndexName());
+    
     List<List<IndexData>> period = new ArrayList<>();
     if(periodType == PeriodType.DAILY){
       period = favoriteFindex.stream()

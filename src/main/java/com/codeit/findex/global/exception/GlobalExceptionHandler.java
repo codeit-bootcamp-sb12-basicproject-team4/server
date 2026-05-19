@@ -56,8 +56,8 @@ public class GlobalExceptionHandler {
     log.error("EntityNotFoundException: {}", e.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(
         Instant.now().toString(),
-        HttpStatus.NOT_FOUND.value(),
-        HttpStatus.NOT_FOUND.getReasonPhrase(),
+        404,
+        "EntityNotFoundException",
         e.getMessage()
     );
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
