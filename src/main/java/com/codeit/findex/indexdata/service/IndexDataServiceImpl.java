@@ -1,31 +1,19 @@
 package com.codeit.findex.indexdata.service;
 
 import com.codeit.findex.global.common.PeriodType;
+import com.codeit.findex.global.common.SourceType;
 import com.codeit.findex.indexdata.dto.ChartDataPoint;
+import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexChartDto;
+import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
 import com.codeit.findex.indexdata.dto.IndexDataDto;
 import com.codeit.findex.indexdata.dto.IndexDataUpdateRequest;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.dto.RankedIndexPerformanceDto;
-import com.codeit.findex.global.common.SourceType;
-import com.codeit.findex.indexdata.dto.CursorPageResponseIndexDataDto;
-import com.codeit.findex.indexdata.dto.IndexDataCreateRequest;
-import com.codeit.findex.indexdata.dto.IndexDataDto;
-import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.mapper.IndexDataMapper;
 import com.codeit.findex.indexdata.repository.IndexDataRepository;
 import com.codeit.findex.indexinfo.entity.Findex;
-import jakarta.persistence.EntityNotFoundException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import com.codeit.findex.indexinfo.repository.IndexinfoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.io.ByteArrayOutputStream;
@@ -35,10 +23,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.data.domain.Slice;
@@ -121,11 +113,11 @@ public class IndexDataServiceImpl implements IndexDataService {
             "수정할 지수 데이터를 찾을 수 없습니다."
         ));
 
-
     IndexData updatedData = indexDataMapper.toEntity(request, indexData);
     IndexData savedData = indexDataRepository.save(updatedData);
 
-    return indexDataMapper.toDto(savedData);  }
+    return indexDataMapper.toDto(savedData);
+  }
 
 
   @Override
@@ -278,9 +270,9 @@ public class IndexDataServiceImpl implements IndexDataService {
     Findex findex = indexinfoRepository.findById(request.indexInfoId())
         .orElseThrow(() -> new EntityNotFoundException(
             "지수 정보를 찾을 수 없습니다. ID:  " + request.indexInfoId()));
-    indexDataRepository.findByIdAndBaseDate(findex.getId(), request.baseDate())
-        .orElseThrow(
-            () -> new IllegalStateException("이미 해당 날짜에 데이터가 존재합니다: " + request.baseDate()));
+    if (indexDataRepository.existsByFindexIdAndBaseDate(findex.getId(), request.baseDate())) {
+      throw new IllegalStateException("이미 해당 날짜에 데이터가 존재합니다: " + request.baseDate());
+    }
 
     IndexData indexData = new IndexData(findex, request.baseDate(), SourceType.USER,
         request.marketPrice(), request.closingPrice(), request.highPrice(), request.lowPrice(),
@@ -293,31 +285,33 @@ public class IndexDataServiceImpl implements IndexDataService {
   @Override
   public List<IndexPerformanceDto> getFavoriteIndexPerformance(PeriodType periodType) {
     List<Findex> favoriteFindex = indexinfoRepository.findAllByFavoriteTrue();
-    
+
     List<List<IndexData>> period = new ArrayList<>();
-    if(periodType == PeriodType.DAILY){
+    if (periodType == PeriodType.DAILY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusDays(1), LocalDate.now()))
           .toList();
-    }else if(periodType == PeriodType.WEEKLY){
+    } else if (periodType == PeriodType.WEEKLY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusWeeks(1), LocalDate.now()))
           .toList();
-    }else if(periodType == PeriodType.MONTHLY){
+    } else if (periodType == PeriodType.MONTHLY) {
       period = favoriteFindex.stream()
           .map(findex -> indexDataRepository.findAllByFindexInAndBaseDateBetween(
               findex, LocalDate.now().minusMonths(1), LocalDate.now()))
           .toList();
     }
     List<IndexPerformanceDto> indexPerformanceDtoList = new ArrayList<>();
-    for(List<IndexData> indexDataList : period){
-      if (indexDataList.size() == 1){
-        indexPerformanceDtoList.add(indexDataMapper.toIndexPerformanceDto(indexDataList.get(0), null));
+    for (List<IndexData> indexDataList : period) {
+      if (indexDataList.size() == 1) {
+        indexPerformanceDtoList.add(
+            indexDataMapper.toIndexPerformanceDto(indexDataList.get(0), null));
       } else if (indexDataList.size() > 1) {
         int size = indexDataList.size();
-        indexPerformanceDtoList.add(indexDataMapper.toIndexPerformanceDto(indexDataList.get(0), indexDataList.get(size-1)));
+        indexPerformanceDtoList.add(indexDataMapper.toIndexPerformanceDto(indexDataList.get(0),
+            indexDataList.get(size - 1)));
       }
     }
     return indexPerformanceDtoList.stream()

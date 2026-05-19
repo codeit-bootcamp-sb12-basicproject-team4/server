@@ -1,21 +1,17 @@
 package com.codeit.findex.indexdata.repository;
 
 import com.codeit.findex.global.common.PeriodType;
-import com.querydsl.core.types.Projections;
 import com.codeit.findex.indexdata.dto.IndexPerformanceDto;
 import com.codeit.findex.indexdata.entity.IndexData;
 import com.codeit.findex.indexdata.entity.QIndexData;
 import com.codeit.findex.indexinfo.entity.QFindex;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.math.BigDecimal;
-import com.codeit.findex.indexdata.dto.IndexDataDto;
-import com.codeit.findex.indexdata.entity.IndexData;
-import com.codeit.findex.indexdata.entity.QIndexData;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -170,7 +166,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       default -> throw new IllegalArgumentException("Invalid sort field: " + sortField);
     }
 
-    List<IndexData> rows = jpaQueryFactory.selectFrom(indexData)
+    List<IndexData> rows = queryFactory.selectFrom(indexData)
         .join(indexData.findex).fetchJoin()
         .where(where)
         .orderBy(order)
@@ -198,7 +194,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       where.and(indexData.baseDate.loe(endDate));
     }
 
-    return jpaQueryFactory.select(indexData.id.count())
+    return queryFactory.select(indexData.id.count())
         .from(indexData)
         .join(indexData.findex)
         .where(where)
@@ -251,7 +247,7 @@ public class IndexDataQueryRepositoryImpl implements IndexDataQueryRepository {
       default -> throw new IllegalArgumentException("Invalid sort field: " + sortField);
     }
 
-    return jpaQueryFactory.selectFrom(indexData)
+    return queryFactory.selectFrom(indexData)
         .join(indexData.findex).fetchJoin()
         .where(where)
         .orderBy(order)
