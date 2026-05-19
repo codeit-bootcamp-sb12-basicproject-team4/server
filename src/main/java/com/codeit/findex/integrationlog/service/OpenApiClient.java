@@ -70,4 +70,8 @@ public class OpenApiClient {
     }
   }
 
+  public List<OpenApiIndex> fetchIndexData(String baseDate) {
+    return fetchIndexInfo(baseDate);
+  }
+
 }

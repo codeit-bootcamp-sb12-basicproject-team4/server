@@ -85,4 +85,26 @@ public class IndexData extends BaseUpdatableEntity {
   @Column(name = "market_totalamount")
   private Long marketTotalamount;
 
+  public void updateFromOpenApi(
+      BigDecimal marketPrice,
+      BigDecimal closePrice,
+      BigDecimal highPrice,
+      BigDecimal lowPrice,
+      BigDecimal versus,
+      BigDecimal fluctuationRate,
+      Long tradingQuantity,
+      Long tradingPrice,
+      Long marketTotalamount
+  ) {
+    this.sourceType = SourceType.OPEN_API;
+    this.marketPrice = marketPrice;
+    this.closePrice = closePrice;
+    this.highPrice = highPrice;
+    this.lowPrice = lowPrice;
+    this.versus = versus;
+    this.fluctuationRate = fluctuationRate;
+    this.tradingQuantity = tradingQuantity;
+    this.tradingPrice = tradingPrice;
+    this.marketTotalamount = marketTotalamount;
+  }
 }
