@@ -1,12 +1,17 @@
 package com.codeit.findex.integrationlog.controller;
 
 import com.codeit.findex.integrationlog.dto.IndexResponse;
+import com.codeit.findex.integrationlog.dto.IntegrationLogPageResponse;
+import com.codeit.findex.integrationlog.dto.IntegrationLogSearchRequest;
 import com.codeit.findex.integrationlog.dto.IndexdataIntegrationRequest;
 import com.codeit.findex.integrationlog.service.IntegrationFacade;
+import com.codeit.findex.integrationlog.service.IntegrationLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/sync-jobs")
 public class IntegrationController {
   private final IntegrationFacade integrationFacade;
+  private final IntegrationLogService integrationLogService; //연동 작업 목록 조회
+
+  @GetMapping
+  public ResponseEntity<IntegrationLogPageResponse> searchSyncJobs(
+      @ModelAttribute IntegrationLogSearchRequest searchRequest
+  ) {
+    return ResponseEntity.ok(integrationLogService.search(searchRequest));
+  }
 
   @PostMapping("/index-infos")
   public ResponseEntity<List<IndexResponse>> syncIndexInfo(HttpServletRequest request) {

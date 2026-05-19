@@ -1,7 +1,7 @@
 package com.codeit.findex.integrationlog.dto;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,19 +21,19 @@ public class IntegrationLogSearchRequest {
 
   private UUID indexInfoId;                 // 지수 정보 ID
 
-  @DateTimeFormat(pattern = "yyyyMMdd")
-  private LocalDate baseDateFrom;           // 대상 날짜 (이상)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+  private LocalDate baseDateFrom;
 
-  @DateTimeFormat(pattern = "yyyyMMdd")
-  private LocalDate baseDateTo;             // 대상 날짜 (미만)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+  private LocalDate baseDateTo;
 
   private String worker;                    // 작업자
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private LocalDateTime jobTimeFrom;
+  private Instant jobTimeFrom;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private LocalDateTime jobTimeTo;
+  private Instant jobTimeTo;
 
   private String status;                    // Result (SUCCESS, FAIL)
 
@@ -49,5 +49,4 @@ public class IntegrationLogSearchRequest {
 
   @Builder.Default
   private Integer size = 10;
-
 }
