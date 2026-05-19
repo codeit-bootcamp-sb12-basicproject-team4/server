@@ -1,6 +1,7 @@
 package com.codeit.findex.global.exception;
 
 import com.codeit.findex.global.common.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.NoSuchElementException;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(
         Instant.now().toString(),
         HttpStatus.BAD_REQUEST.value(),
-        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+        "IllegalArgumentException",
         e.getMessage()
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -48,6 +49,30 @@ public class GlobalExceptionHandler {
         e.getMessage()
     );
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+    log.error("EntityNotFoundException: {}", e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(
+        Instant.now().toString(),
+        HttpStatus.NOT_FOUND.value(),
+        "EntityNotFoundException",
+        e.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(errorResponse);
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
+    log.error("IllegalStateException: {}", e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(
+        Instant.now().toString(),
+        HttpStatus.BAD_REQUEST.value(),
+        "IllegalStateException",
+        e.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)

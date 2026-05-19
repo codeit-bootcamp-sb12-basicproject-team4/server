@@ -28,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @SuperBuilder
 @Table(name = "index_data")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class IndexData extends BaseUpdatableEntity {
 
   @NotNull
